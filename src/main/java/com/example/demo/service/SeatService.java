@@ -15,7 +15,7 @@ public class SeatService {
     private final SeatRepository seatRepository;
 
     public Seat findSeatById(Integer seatId){
-        return seatRepository.findById(seatId);
+        return seatRepository.findById(seatId).get();
     }
 
     public void deleteSeatById(Integer seatId){

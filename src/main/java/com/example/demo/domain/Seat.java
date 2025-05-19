@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 @Entity
 @Table(name = "seat")
 @RequiredArgsConstructor
-@NoArgsConstructor
 public class Seat {
     @Id
     private Integer seatId;

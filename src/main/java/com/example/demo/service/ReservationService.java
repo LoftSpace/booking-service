@@ -23,12 +23,12 @@ public class ReservationService {
         return reservationRepository.findReservedSeatIdByScreeningId(screeningId);
     }
 
-    public List<Reservation> getUserReservation(Long userId) {
-        return reservationRepository.findByUserId(userId);
+    public List<Reservation> getUserReservation(String userEmail) {
+        return reservationRepository.findByUserEmail(userEmail);
     }
 
     public List<Reservation> getAllReservationByScreeningId(Long screeningId){
-        return reservationRepository.findAllReservationByScreeningId(screeningId);
+        return reservationRepository.findAllByScreeningId(screeningId);
     }
 
     public void reserve(List<Reservation> reservations){
