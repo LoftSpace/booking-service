@@ -24,7 +24,9 @@ public class BookingService {
 
     public void reserve(String userEmail, List<Integer> requestSeatIds, Long screeningId) throws Exception {
         Screening screening = screeningService.getScreeningById(screeningId);
-        assertSeatsNoConflict(requestSeatIds,screeningId);
+        Set<Integer> reservedSeatIds = reservationService.getReservedSeatIdByScreeningId(screeningId);
+
+        assertSeatsNoConflict(requestSeatIds,reservedSeatIds);
         List<Reservation> reservations = buildReservations(requestSeatIds,screening,userEmail);
         reservationService.reserve(reservations);
     }
@@ -40,8 +42,7 @@ public class BookingService {
                         .toList();
     }
 
-    private void assertSeatsNoConflict(List<Integer> seatIds, Long screeningId) throws Exception {
-        Set<Integer> reservedSeats = reservationService.getReservedSeatIdByScreeningId(screeningId);
+    private void assertSeatsNoConflict(List<Integer> seatIds, Set<Integer> reservedSeats) throws Exception {
         List<Integer> unavailableSeats = seatIds.stream()
                 .filter(reservedSeats::contains)
                 .toList();
