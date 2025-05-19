@@ -22,10 +22,10 @@ public class BookingService {
     @Autowired
     private final ScreeningService screeningService;
 
-    public void reserve(String userEmail, List<Integer> seatIds, Long screeningId) throws Exception {
+    public void reserve(String userEmail, List<Integer> requestSeatIds, Long screeningId) throws Exception {
         Screening screening = screeningService.getScreeningById(screeningId);
-        assertSeatsNoConflict(seatIds,screeningId);
-        List<Reservation> reservations = buildReservations(seatIds, screening,userEmail);
+        assertSeatsNoConflict(requestSeatIds,screeningId);
+        List<Reservation> reservations = buildReservations(requestSeatIds,screening,userEmail);
         reservationService.reserve(reservations);
     }
 
