@@ -15,4 +15,5 @@ public class Movie {
     private Long movieId;
 
     private String movieName;
+    private String runningTime;
 }
