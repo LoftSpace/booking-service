@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.ReservationReqiestDto;
 import com.example.demo.service.BookingService;
+import com.example.demo.service.MovieInfoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,8 +14,9 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class BookingController {
 
-    @Autowired
-    BookingService bookingService;
+
+    private final BookingService bookingService;
+    private final MovieInfoService movieInfoService;
 
     @GetMapping("/screenings/{screeningId}/seats")
     public ResponseEntity<?> getSeatStatus(@PathVariable Long screeningId) {
@@ -36,6 +38,13 @@ public class BookingController {
         }
     }
 
-
+    @GetMapping("/{movieId}/screenings")
+    public ResponseEntity<?> getScreeningsByMovie(@PathVariable Long movieId){
+        try{
+            return ResponseEntity.ok(movieInfoService.getMovieScheduleByMovieIdVer1(movieId));
+        } catch(Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
 
 }
