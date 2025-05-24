@@ -26,6 +26,7 @@ public class ScreeningService {
     }
 
     public List<Screening> getScreeningListByMovieId(Long movieId){
-        return screeningRepository.findAllByMovieId(movieId);
+        return screeningRepository.findAllByMovieId(movieId)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("상영 정보 없음")));
     }
 }

@@ -7,12 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 
 public interface ScreeningRepository extends JpaRepository<Screening,Long> {
 
     boolean existsById(Long screeningId);
-    List<Screening> findAllByMovieId(Long movieId);
+    Optional<List<Screening>> findAllByMovieId(Long movieId);
 
     @Query(value = "SELECT movieId,screeningId,movieName,startTime,endTime" +
             "FROM movie m" +

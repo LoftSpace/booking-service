@@ -19,7 +19,7 @@ public class BookingController {
     private final MovieInfoService movieInfoService;
 
     @GetMapping("/screenings/{screeningId}/seats")
-    public ResponseEntity<?> getSeatStatus(@PathVariable Long screeningId) {
+    public ResponseEntity<?> getSeatStatus(@PathVariable("screeningId") Long screeningId) {
         try{
             return ResponseEntity.ok(bookingService.getSeatStatus(screeningId));
         } catch (Exception e){
@@ -39,7 +39,7 @@ public class BookingController {
     }
 
     @GetMapping("/{movieId}/screenings")
-    public ResponseEntity<?> getScreeningsByMovie(@PathVariable Long movieId){
+    public ResponseEntity<?> getScreeningsByMovie(@PathVariable("movieId") Long movieId){
         try{
             return ResponseEntity.ok(movieInfoService.getMovieScheduleByMovieIdVer1(movieId));
         } catch(Exception e){
