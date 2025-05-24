@@ -1,11 +1,11 @@
 package com.example.demo.repository;
 
+
 import com.example.demo.dto.MovieScheduleDto;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
+import java.util.Optional;
 
 public interface MovieScheduleRepository {
-    List<MovieScheduleDto> findMovieSchedulesByMovieId(Long movieId);
+    Optional<List<MovieScheduleDto>> findByMovieId(Long movieId);
 }
