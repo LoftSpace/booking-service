@@ -14,15 +14,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class MovieInfoServiceTest {
+public class MovieScheduleServiceTest {
     @InjectMocks
-    private MovieInfoService movieInfoService;
+    private MovieScheduleService movieScheduleService;
 
     @Mock
     private MovieService movieService;
@@ -49,7 +48,7 @@ public class MovieInfoServiceTest {
         when(screeningService.getScreeningListByMovieId(anyLong())).thenReturn(testScreeningList);
 
         //when
-        List<MovieScheduleDto> movieScheduleList = movieInfoService.getMovieScheduleByMovieIdVer1(movieId);
+        List<MovieScheduleDto> movieScheduleList = movieScheduleService.getMovieScheduleByMovieIdVer1(movieId);
         //then
         Assertions.assertThat(movieScheduleList).isNotNull();
         Assertions.assertThat(movieScheduleList.size()).isEqualTo(testScreeningList.size());
@@ -65,7 +64,7 @@ public class MovieInfoServiceTest {
 
         //
         org.junit.jupiter.api.Assertions.assertThrows(EntityNotFoundException.class,
-                () -> movieInfoService.getMovieScheduleByMovieIdVer1(movieId));
+                () -> movieScheduleService.getMovieScheduleByMovieIdVer1(movieId));
 
     }
 

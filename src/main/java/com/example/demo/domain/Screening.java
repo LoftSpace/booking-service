@@ -16,9 +16,13 @@ public class Screening {
     @GeneratedValue
     private Long screeningId;
 
+    @Column(name = "movieId")
     private Long movieId;
+    @Column(name = "startTime")
     private String startTime;
+    @Column(name = "endTime")
     private String endTime;
+
 
 
 }

@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
 
 @Getter
 @Builder
@@ -18,5 +17,4 @@ public class MovieScheduleDto {
     private String startTime;
     private String endTime;
     // 변경 가능성 : 새로운 필드 추가 ex) 평점, 제작사, 배우 등
-
 }
