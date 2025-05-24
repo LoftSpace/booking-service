@@ -21,23 +21,6 @@ public class MovieScheduleService {
         return screeningService.getScreeningListByMovieId(movieId);
     }
 
-    public List<MovieScheduleDto> getMovieScheduleByMovieIdVer1(Long movieId){
-        Movie movie = movieService.getMovieById(movieId);
-        List<Screening> screeningListByMovieId = screeningService.getScreeningListByMovieId(movieId);
-
-        List<MovieScheduleDto> movieSchedules = screeningListByMovieId.stream()
-                .map(screening -> MovieScheduleDto.builder()
-                        .movieId(movieId)
-                        .movieName(movie.getMovieName())
-                        .screeningId(screening.getScreeningId())
-                        .startTime(screening.getStartTime())
-                        .endTime(screening.getEndTime())
-                        .build()
-                )
-                .toList();
-        return movieSchedules;
-    }
-
     public List<MovieScheduleDto> getMovieScheduleByMovieIdVer2(Long movieId){
         return movieScheduleRepository.findByMovieId(movieId)
                 .orElseThrow(() -> new EntityNotFoundException("상영정보 없음"));
