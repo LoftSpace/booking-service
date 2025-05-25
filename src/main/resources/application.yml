@@ -3,7 +3,7 @@ spring:
     name=movie-seat-reservation
   datasource :
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/test
+    url: jdbc:mysql://localhost:3306/myTheater
     username: root
     password:
   jpa:
