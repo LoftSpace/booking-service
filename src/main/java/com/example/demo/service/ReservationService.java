@@ -35,5 +35,4 @@ public class ReservationService {
         reservationRepository.saveAll(reservations);
     }
 
-    //public void Reserve(Long userId, Long screeningId, )
 }

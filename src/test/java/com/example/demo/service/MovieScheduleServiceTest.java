@@ -39,7 +39,7 @@ public class MovieScheduleServiceTest {
     }
 
     @Test
-    public void getMovieScheduleByMovieId() {
+    public void getMovieWithSchedules() {
         //given
         movieId = SAMPLE_MOVIE_ID;
         initScreeningListByMovieId(movieId);
@@ -48,7 +48,7 @@ public class MovieScheduleServiceTest {
         when(screeningService.getScreeningListByMovieId(anyLong())).thenReturn(testScreeningList);
 
         //when
-        List<MovieScheduleDto> movieScheduleList = movieScheduleService.getMovieScheduleByMovieIdVer1(movieId);
+        List<MovieScheduleDto> movieScheduleList = movieScheduleService.getMovieWithSchedules(movieId);
         //then
         Assertions.assertThat(movieScheduleList).isNotNull();
         Assertions.assertThat(movieScheduleList.size()).isEqualTo(testScreeningList.size());
@@ -64,7 +64,7 @@ public class MovieScheduleServiceTest {
 
         //
         org.junit.jupiter.api.Assertions.assertThrows(EntityNotFoundException.class,
-                () -> movieScheduleService.getMovieScheduleByMovieIdVer1(movieId));
+                () -> movieScheduleService.getMovieWithSchedules(movieId));
 
     }
 
