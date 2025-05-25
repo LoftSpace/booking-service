@@ -23,8 +23,7 @@ public class SeatService {
     }
 
     public List<Seat> findAllSeats(){
-        List<Seat> seats = seatRepository.findAll();
-        return seats;
+        return  seatRepository.findAll();
     }
 
 }
