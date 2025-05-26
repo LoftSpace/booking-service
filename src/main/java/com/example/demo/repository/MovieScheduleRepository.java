@@ -7,5 +7,5 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MovieScheduleRepository {
-    Optional<List<MovieScheduleDto>> findByMovieId(Long movieId);
+    Optional<List<MovieScheduleDto>> findByMovieId(Integer movieId);
 }

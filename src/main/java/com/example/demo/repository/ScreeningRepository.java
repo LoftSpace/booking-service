@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface ScreeningRepository extends JpaRepository<Screening,Integer> {
 
-    Optional<List<Screening>> findAllByMovieId(Long movieId);
+    Optional<List<Screening>> findAllByMovieId(Integer movieId);
     boolean existsById(Integer screeningId);
     Optional<Screening> findById(Integer screeningId);
     Screening save(Screening screening);

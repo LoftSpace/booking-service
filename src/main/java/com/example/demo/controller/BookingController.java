@@ -38,7 +38,7 @@ public class BookingController {
     }
 
     @GetMapping("/{movieId}/screenings")
-    public ResponseEntity<?> getScreeningsByMovie(@PathVariable("movieId") Long movieId){
+    public ResponseEntity<?> getScreeningsByMovie(@PathVariable("movieId") Integer movieId){
         try{
             return ResponseEntity.ok(movieScheduleService.getMovieWithSchedules(movieId));
         } catch(Exception e){
