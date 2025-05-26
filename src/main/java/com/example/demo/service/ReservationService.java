@@ -18,20 +18,20 @@ public class ReservationService {
     @Autowired
     private final ScreeningService screeningService;
 
-    public Set<Integer> getReservedSeatIdByScreeningId(Long screeningId){
+    public Set<Integer> getReservedSeatIdByScreeningId(Integer screeningId){
         screeningService.getScreeningById(screeningId);
         return reservationRepository.findReservedSeatIdByScreeningId(screeningId);
     }
 
-    public List<Reservation> getUserReservation(String userEmail) {
-        return reservationRepository.findByUserEmail(userEmail);
+    public List<Reservation> getUserReservation(Integer userId) {
+        return reservationRepository.findByUserId(userId);
     }
 
-    public List<Reservation> getAllReservationByScreeningId(Long screeningId){
+    public List<Reservation> getAllReservationByScreeningId(Integer screeningId){
         return reservationRepository.findAllByScreeningId(screeningId);
     }
 
-    public void reserve(List<Reservation> reservations){
+    public void saveReservations(List<Reservation> reservations){
         reservationRepository.saveAll(reservations);
     }
 

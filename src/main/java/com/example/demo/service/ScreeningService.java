@@ -20,12 +20,12 @@ public class ScreeningService {
     @Qualifier("screeningJpaRepository")
     private final ScreeningRepository screeningJpaRepository;
 
-    public Screening getScreeningById(Long screeningId){
+    public Screening getScreeningById(Integer screeningId){
         return screeningJpaRepository.findById(screeningId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("해당 시간대에 영화 없음")));
     }
 
-    public void assertScreeningExists(Long screeningId){
+    public void assertScreeningExists(Integer screeningId){
         if(screeningJpaRepository.existsById(screeningId))
             throw new EntityNotFoundException(String.format("해당 시간대에 영화 없음"));
     }

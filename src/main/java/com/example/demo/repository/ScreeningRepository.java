@@ -6,11 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface ScreeningRepository extends JpaRepository<Screening,Long> {
+public interface ScreeningRepository extends JpaRepository<Screening,Integer> {
 
     Optional<List<Screening>> findAllByMovieId(Long movieId);
-    boolean existsById(Long screeningId);
-    Optional<Screening> findById(Long screeningId);
+    boolean existsById(Integer screeningId);
+    Optional<Screening> findById(Integer screeningId);
     Screening save(Screening screening);
-    void deleteById(Long screeningId);
+    void deleteById(Integer screeningId);
 }

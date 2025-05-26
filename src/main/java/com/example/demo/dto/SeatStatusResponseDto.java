@@ -8,6 +8,6 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public class SeatStatusResponseDto {
-    private Long screeningId;
+    private Integer screeningId;
     private List<SeatWithStatusDto> availableSeatWithPrice;
 }
