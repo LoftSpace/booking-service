@@ -18,7 +18,7 @@ public class MovieScheduleJdbcTemplateRepository implements MovieScheduleReposit
 
 
     @Override
-    public Optional<List<MovieScheduleDto>> findByMovieId(Long movieId) {
+    public Optional<List<MovieScheduleDto>> findByMovieId(Integer movieId) {
         String sql = "SELECT * " +
                 "FROM movie m " +
                 "LEFT JOIN screening s ON m.movie_id = s.movie_id " +

@@ -14,8 +14,12 @@ import lombok.NoArgsConstructor;
 public class Movie {
     @Id
     @GeneratedValue
-    private Long movieId;
+    private Integer movieId;
 
     private String movieName;
     private String runningTime;
+
+    void save(){
+
+    }
 }

@@ -11,8 +11,10 @@ import org.springframework.stereotype.Service;
 public class MovieService {
     private final MovieRepository movieRepository;
 
-    public Movie getMovieById(Long movieId){
+    public Movie getMovieById(Integer movieId){
         return movieRepository.findById(movieId).orElseThrow(
                 () -> new EntityNotFoundException("해당 영화 상영정보 없음"));
     }
+
+
 }

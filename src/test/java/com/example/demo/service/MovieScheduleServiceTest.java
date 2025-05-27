@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
@@ -30,8 +31,8 @@ public class MovieScheduleServiceTest {
 
     private Movie testMovie;
     private List<Screening> testScreeningList;
-    private Long movieId;
-    private static final Long SAMPLE_MOVIE_ID = 7L;
+    private Integer movieId;
+    private static final Integer SAMPLE_MOVIE_ID = 7;
 
     @BeforeEach
     void setUp() {
@@ -44,8 +45,8 @@ public class MovieScheduleServiceTest {
         movieId = SAMPLE_MOVIE_ID;
         initScreeningListByMovieId(movieId);
 
-        when(movieService.getMovieById(anyLong())).thenReturn(testMovie);
-        when(screeningService.getScreeningListByMovieId(anyLong())).thenReturn(testScreeningList);
+        when(movieService.getMovieById(anyInt())).thenReturn(testMovie);
+        when(screeningService.getScreeningListByMovieId(anyInt())).thenReturn(testScreeningList);
 
         //when
         List<MovieScheduleDto> movieScheduleList = movieScheduleService.getMovieWithSchedules(movieId);
@@ -59,8 +60,8 @@ public class MovieScheduleServiceTest {
     public void getMovieScheduleByMovieIdWhenScheduleIsNull(){
         //given
         movieId = SAMPLE_MOVIE_ID;
-        when(movieService.getMovieById(anyLong())).thenReturn(testMovie);
-        when(screeningService.getScreeningListByMovieId(anyLong())).thenThrow(new EntityNotFoundException("상영정보 없음"));
+        when(movieService.getMovieById(anyInt())).thenReturn(testMovie);
+        when(screeningService.getScreeningListByMovieId(anyInt())).thenThrow(new EntityNotFoundException("상영정보 없음"));
 
         //
         org.junit.jupiter.api.Assertions.assertThrows(EntityNotFoundException.class,
@@ -80,10 +81,10 @@ public class MovieScheduleServiceTest {
         }
     }
 
-    private void initScreeningListByMovieId(Long movieId) {
+    private void initScreeningListByMovieId(Integer movieId) {
         testScreeningList = new ArrayList<>();
-        testScreeningList.add(new Screening(1L, movieId, "10:00", "12:30"));
-        testScreeningList.add(new Screening(2L, movieId, "13:00", "15:30"));
+        testScreeningList.add(new Screening(1, movieId, "10:00", "12:30"));
+        testScreeningList.add(new Screening(2, movieId, "13:00", "15:30"));
 
     }
 }

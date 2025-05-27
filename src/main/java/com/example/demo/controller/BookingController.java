@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.ReservationReqiestDto;
+import com.example.demo.dto.ReservationRequestDto;
 import com.example.demo.service.BookingService;
 import com.example.demo.service.MovieScheduleService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ public class BookingController {
     private final MovieScheduleService movieScheduleService;
 
     @GetMapping("/screenings/{screeningId}/seats")
-    public ResponseEntity<?> getSeatStatus(@PathVariable("screeningId") Long screeningId) {
+    public ResponseEntity<?> getSeatStatus(@PathVariable("screeningId") Integer screeningId) {
         try{
             return ResponseEntity.ok(bookingService.getSeatStatus(screeningId));
         } catch (Exception e){
@@ -28,9 +28,9 @@ public class BookingController {
     }
 
     @PostMapping("/reservations")
-    public ResponseEntity<?> reserve(@RequestBody ReservationReqiestDto request) {
+    public ResponseEntity<?> reserve(@RequestBody ReservationRequestDto request) {
         try{
-            bookingService.reserve(request.getUserEmail(),request.getSeatIds(),request.getScreeningId());
+            bookingService.reserve(request.getUserId(),request.getSeatIds(),request.getScreeningId());
             return ResponseEntity.ok().body(String.format("예매 완료"));
         } catch(Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
@@ -38,7 +38,7 @@ public class BookingController {
     }
 
     @GetMapping("/{movieId}/screenings")
-    public ResponseEntity<?> getScreeningsByMovie(@PathVariable("movieId") Long movieId){
+    public ResponseEntity<?> getScreeningsByMovie(@PathVariable("movieId") Integer movieId){
         try{
             return ResponseEntity.ok(movieScheduleService.getMovieWithSchedules(movieId));
         } catch(Exception e){

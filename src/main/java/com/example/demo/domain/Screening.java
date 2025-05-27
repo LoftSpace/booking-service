@@ -14,10 +14,10 @@ import java.time.LocalDateTime;
 public class Screening {
     @Id
     @GeneratedValue
-    private Long screeningId;
+    private Integer screeningId;
 
     @Column(name = "movieId")
-    private Long movieId;
+    private Integer movieId;
     @Column(name = "startTime")
     private String startTime;
     @Column(name = "endTime")
