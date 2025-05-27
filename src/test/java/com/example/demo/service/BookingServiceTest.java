@@ -44,7 +44,7 @@ public class BookingServiceTest {
 
     // 좌석 1,2,3,4,5 예매 요청, 이미 1,2,3, 예매된 상태 -> 실패 처리
     @Test
-    public void reserveConflictTest() {
+    public void reservationShouldThrowOnSeatConflictTest() {
         //given
         userId = SAMPLE_USER_ID;
         screeningId = SAMPLE_SCREENING_ID;
@@ -88,6 +88,22 @@ public class BookingServiceTest {
 
     }
 
+    // 요청 좌석이 없을 때
+    @Test
+    public void reservationNoRequestSeatIdTest() {
+        //given
+        userId = SAMPLE_USER_ID;
+        screeningId = SAMPLE_SCREENING_ID;
+        movieId = SAMPLE_MOVIE_ID;
+        testScreening = new Screening(screeningId,movieId,"2025-05-24 16:51","2025-05-24 18:51");
+
+        initReservedSeatIds();
+
+        when(screeningService.getScreeningById(anyInt())).thenReturn(testScreening);
+        when(reservationService.getReservedSeatIdByScreeningId(screeningId)).thenReturn(reservedSeatIds);
+
+
+    }
     private void initReservedSeatIds() {
         reservedSeatIds.add(1);
         reservedSeatIds.add(2);

@@ -19,7 +19,6 @@ public class ReservationService {
     private final ScreeningService screeningService;
 
     public Set<Integer> getReservedSeatIdByScreeningId(Integer screeningId){
-        screeningService.getScreeningById(screeningId);
         return reservationRepository.findReservedSeatIdByScreeningId(screeningId);
     }
 
