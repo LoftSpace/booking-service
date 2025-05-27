@@ -24,7 +24,6 @@ public class BookingService {
 
     public void reserve(Integer userId, List<Integer> requestSeatIds, Integer screeningId) throws Exception {
         Screening screening = screeningService.getScreeningById(screeningId);
-        // reservedSeatIds가 없다면 이거에 대해 어떻게 처리할 것인가?
         Set<Integer> reservedSeatIds = reservationService.getReservedSeatIdByScreeningId(screeningId);
 
         assertSeatsNoConflict(requestSeatIds,reservedSeatIds);
@@ -34,6 +33,8 @@ public class BookingService {
     }
 
     private void assertSeatsNoConflict(List<Integer> seatIds, Set<Integer> reservedSeats) throws Exception {
+        if(reservedSeats.isEmpty()) return;
+
         List<Integer> unavailableSeats = seatIds.stream()
                 .filter(reservedSeats::contains)
                 .toList();
