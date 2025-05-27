@@ -2,7 +2,9 @@ package com.example.demo.service;
 
 
 import com.example.demo.domain.Screening;
+import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -42,14 +44,18 @@ public class BookingServiceTest {
     private Set<Integer> reservedSeatIds =  new HashSet<>();
     private List<Integer> requestSeatIds = new ArrayList<>();
 
-    // 좌석 1,2,3,4,5 예매 요청, 이미 1,2,3, 예매된 상태 -> 실패 처리
-    @Test
-    public void reservationShouldThrowOnSeatConflictTest() {
-        //given
+    @BeforeEach
+    public void setUp() {
         userId = SAMPLE_USER_ID;
         screeningId = SAMPLE_SCREENING_ID;
         movieId = SAMPLE_MOVIE_ID;
         testScreening = new Screening(screeningId,movieId,"2025-05-24 16:51","2025-05-24 18:51");
+
+    }
+    // 좌석 1,2,3,4,5 예매 요청, 이미 1,2,3, 예매된 상태 -> 실패 처리
+    @Test
+    public void reservationShouldThrowOnSeatConflictTest() {
+        //given
 
         initReservedSeatIds();
         for(int i = 0; i < 5; i++)
@@ -69,10 +75,6 @@ public class BookingServiceTest {
     @Test
     public void reservationSuccessTest() throws Exception {
         //given
-        userId = SAMPLE_USER_ID;
-        screeningId = SAMPLE_SCREENING_ID;
-        movieId = SAMPLE_MOVIE_ID;
-        testScreening = new Screening(screeningId,movieId,"2025-05-24 16:51","2025-05-24 18:51");
 
         requestSeatIds.add(4);
         requestSeatIds.add(5);
@@ -92,18 +94,19 @@ public class BookingServiceTest {
     @Test
     public void reservationNoRequestSeatIdTest() {
         //given
-        userId = SAMPLE_USER_ID;
-        screeningId = SAMPLE_SCREENING_ID;
-        movieId = SAMPLE_MOVIE_ID;
-        testScreening = new Screening(screeningId,movieId,"2025-05-24 16:51","2025-05-24 18:51");
 
         initReservedSeatIds();
 
         when(screeningService.getScreeningById(anyInt())).thenReturn(testScreening);
         when(reservationService.getReservedSeatIdByScreeningId(screeningId)).thenReturn(reservedSeatIds);
 
+        //then
+        Assertions.assertDoesNotThrow(() ->
+            bookingService.reserve(userId,requestSeatIds,screeningId));
 
     }
+
+
     private void initReservedSeatIds() {
         reservedSeatIds.add(1);
         reservedSeatIds.add(2);

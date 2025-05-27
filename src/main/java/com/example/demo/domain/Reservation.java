@@ -42,6 +42,4 @@ public class Reservation {
         this.seatId = seatId;
     }
 
-
-
 }
