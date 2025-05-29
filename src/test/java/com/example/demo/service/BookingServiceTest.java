@@ -1,8 +1,8 @@
 package com.example.demo.service;
 
 
+import com.example.demo.domain.RequestSeatIds;
 import com.example.demo.domain.Screening;
-import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
@@ -42,7 +43,7 @@ public class BookingServiceTest {
     private Integer userId;
     private Integer movieId;
     private Set<Integer> reservedSeatIds =  new HashSet<>();
-    private List<Integer> requestSeatIds = new ArrayList<>();
+    private List<Integer> rawRequestSeatIds = new ArrayList<>();
 
     @BeforeEach
     public void setUp() {
@@ -59,13 +60,13 @@ public class BookingServiceTest {
 
         initReservedSeatIds();
         for(int i = 0; i < 5; i++)
-            requestSeatIds.add(i);
+            rawRequestSeatIds.add(i);
+        RequestSeatIds requestSeatIds = new RequestSeatIds(rawRequestSeatIds);
 
-        when(screeningService.getScreeningById(anyInt())).thenReturn(testScreening);
         when(reservationService.getReservedSeatIdByScreeningId(screeningId)).thenReturn(reservedSeatIds);
 
         //then
-        Exception exception = Assertions.assertThrows(Exception.class,
+        Exception exception = assertThrows(Exception.class,
                 () -> bookingService.reserve(userId, requestSeatIds, screeningId));
         org.assertj.core.api.Assertions.assertThat(exception.getMessage()).isEqualTo("이미 예약 되어있는 좌석 : " + reservedSeatIds);
 
@@ -76,8 +77,9 @@ public class BookingServiceTest {
     public void reservationSuccessTest() throws Exception {
         //given
 
-        requestSeatIds.add(4);
-        requestSeatIds.add(5);
+        rawRequestSeatIds.add(4);
+        rawRequestSeatIds.add(5);
+        RequestSeatIds requestSeatIds = new RequestSeatIds(rawRequestSeatIds);
         initReservedSeatIds();
 
         when(screeningService.getScreeningById(anyInt())).thenReturn(testScreening);
@@ -85,21 +87,19 @@ public class BookingServiceTest {
 
         //then
         Assertions.assertDoesNotThrow(() ->
-                bookingService.reserve(userId,requestSeatIds,screeningId));
-
-
+                bookingService.reserve(userId, requestSeatIds,screeningId));
     }
 
     // 요청 좌석이 없을 때
     @Test
-    public void reservationNoRequestSeatIdTest() {
+    public void reservationNoRequestSeatIdTest() throws Exception {
         //given
-
         initReservedSeatIds();
 
         //then
-        Assertions.assertThrows(IllegalArgumentException.class,
-                () ->  bookingService.reserve(userId,requestSeatIds,screeningId));
+        assertThrows(IllegalArgumentException.class, () -> {
+            new RequestSeatIds(rawRequestSeatIds);
+        });
     }
 
 

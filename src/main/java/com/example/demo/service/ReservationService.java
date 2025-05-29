@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.domain.Reservation;
+import com.example.demo.domain.ReservationInfo;
 import com.example.demo.repository.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,8 @@ public class ReservationService {
         return reservationRepository.findReservedSeatIdByScreeningId(screeningId);
     }
 
-    public List<Reservation> getUserReservation(Integer userId) {
-        return reservationRepository.findByUserId(userId);
+    public List<ReservationInfo> getUserReservation(Integer userId) {
+        return reservationRepository.findReservationInfoByUserId(userId);
     }
 
     public List<Reservation> getAllReservationByScreeningId(Integer screeningId){

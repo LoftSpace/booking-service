@@ -13,7 +13,6 @@ public class Seat {
     @Id
     private Integer seatId;
 
-    private Integer seatNum;
     private Integer row;
     private Integer col;
 

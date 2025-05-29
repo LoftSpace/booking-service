@@ -9,3 +9,9 @@ spring:
   jpa:
     show-sql: true
 
+  management:
+    endpoints:
+      web:
+        base-path: /demo
+        exposure:
+          include: prometheus

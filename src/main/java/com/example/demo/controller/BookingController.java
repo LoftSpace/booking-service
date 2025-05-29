@@ -34,7 +34,7 @@ public class BookingController {
             bookingService.reserve(request.getUserId(),new RequestSeatIds(request.getSeatIds()),request.getScreeningId());
             return ResponseEntity.ok().body(String.format("예매 완료"));
         } catch(Exception e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.ok().body(e.getMessage());
         }
     }
 
@@ -46,5 +46,7 @@ public class BookingController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+
+
 
 }
