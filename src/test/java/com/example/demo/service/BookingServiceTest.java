@@ -97,13 +97,9 @@ public class BookingServiceTest {
 
         initReservedSeatIds();
 
-        when(screeningService.getScreeningById(anyInt())).thenReturn(testScreening);
-        when(reservationService.getReservedSeatIdByScreeningId(screeningId)).thenReturn(reservedSeatIds);
-
         //then
-        Assertions.assertDoesNotThrow(() ->
-            bookingService.reserve(userId,requestSeatIds,screeningId));
-
+        Assertions.assertThrows(IllegalArgumentException.class,
+                () ->  bookingService.reserve(userId,requestSeatIds,screeningId));
     }
 
 
