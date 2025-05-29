@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.domain.RequestSeatIds;
 import com.example.demo.domain.Reservation;
 import com.example.demo.domain.Screening;
 import com.example.demo.domain.Seat;
@@ -22,40 +23,36 @@ public class BookingService {
     private final ScreeningService screeningService;
     private final ReservationNumberService reservationNumberService;
 
-    public void reserve(Integer userId, List<Integer> requestSeatIds, Integer screeningId) throws Exception {
-        if(requestSeatIds.isEmpty())
-            throw new IllegalArgumentException("좌석을 선택해야 합니다");
-
+    public void reserve(Integer userId, RequestSeatIds requestSeatIds, Integer screeningId) throws Exception {
         assertSeatsAreAvailable(requestSeatIds,screeningId);
 
         List<Reservation> reservations = buildReservations(userId,requestSeatIds,screeningId);
         reservationService.saveReservations(reservations);
     }
 
-    private void assertSeatsAreAvailable(List<Integer> requestSeatIds,Integer screeningId) throws Exception {
+    private void assertSeatsAreAvailable(RequestSeatIds requestSeatIds,Integer screeningId) throws Exception {
         assertSeatsNoConflict(requestSeatIds, screeningId);
         // 추후 좌석 유효 조건 추가 가능
     }
 
-    private void assertSeatsNoConflict(List<Integer> requestSeatIds, Integer screeningId) throws Exception {
+    private void assertSeatsNoConflict(RequestSeatIds requestSeatIds, Integer screeningId) throws Exception {
         Set<Integer> reservedSeatIds = reservationService.getReservedSeatIdByScreeningId(screeningId);
         if(reservedSeatIds.isEmpty()) return;
 
-        List<Integer> conflictSeats = requestSeatIds.stream()
-                .filter(reservedSeatIds::contains)
-                .toList();
+        List<Integer> conflictSeats = requestSeatIds.getConflicts(reservedSeatIds);
 
         if(!conflictSeats.isEmpty())
             throw new Exception(String.format("이미 예약 되어있는 좌석 : " + conflictSeats));
     }
 
-    private List<Reservation> buildReservations(Integer userId,List<Integer> seatIds, Integer screeningId) {
+    private List<Reservation> buildReservations(Integer userId,RequestSeatIds requestSeatIds, Integer screeningId) {
         String reservedTime = getCurrentTime();
         String reservationNumber = reservationNumberService.generateReservationNumber(userId,reservedTime,screeningId);
 
         Screening screening = screeningService.getScreeningById(screeningId);
         // 이 부분은 Reservation의 책임이지 않는가?
-        return seatIds.stream()
+        return requestSeatIds.getIds()
+                .stream()
                 .map(seatId -> Reservation.builder()
                         .reservationNumber(reservationNumber)
                         .userId(userId)

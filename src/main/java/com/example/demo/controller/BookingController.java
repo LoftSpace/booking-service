@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.domain.RequestSeatIds;
 import com.example.demo.dto.ReservationRequestDto;
 import com.example.demo.service.BookingService;
 import com.example.demo.service.MovieScheduleService;
@@ -30,7 +31,7 @@ public class BookingController {
     @PostMapping("/reservations")
     public ResponseEntity<?> reserve(@RequestBody ReservationRequestDto request) {
         try{
-            bookingService.reserve(request.getUserId(),request.getSeatIds(),request.getScreeningId());
+            bookingService.reserve(request.getUserId(),new RequestSeatIds(request.getSeatIds()),request.getScreeningId());
             return ResponseEntity.ok().body(String.format("예매 완료"));
         } catch(Exception e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
