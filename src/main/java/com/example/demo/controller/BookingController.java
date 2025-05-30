@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.domain.RequestSeatIds;
 import com.example.demo.dto.ReservationRequestDto;
+import com.example.demo.dto.SeatSelectRequestDto;
 import com.example.demo.service.BookingService;
 import com.example.demo.service.MovieScheduleService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,16 @@ public class BookingController {
         }
 
     }
+    @PostMapping("/seats/select")
+    public ResponseEntity<?> selectSeat(@RequestBody SeatSelectRequestDto request){
+        try{
+            bookingService.selectSeat(request.getUserId(),request.getSeatId(),request.getScreeningId());
+            return ResponseEntity.ok().body("좌석 선택 완료");
+        } catch (Exception e) {
+            return ResponseEntity.ok().body(e.getMessage());
+        }
 
+    }
     @PostMapping("/reservations")
     public ResponseEntity<?> reserve(@RequestBody ReservationRequestDto request) {
         try{

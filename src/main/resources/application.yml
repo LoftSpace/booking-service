@@ -9,9 +9,11 @@ spring:
   jpa:
     show-sql: true
 
-  management:
-    endpoints:
-      web:
-        base-path: /demo
-        exposure:
-          include: prometheus
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    #       include: prometheus << 이렇게 해도됩니다.
+
+

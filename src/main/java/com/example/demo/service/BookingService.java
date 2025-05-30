@@ -1,18 +1,22 @@
 package com.example.demo.service;
 
+import com.example.demo.SeatSelectionCache;
 import com.example.demo.domain.RequestSeatIds;
 import com.example.demo.domain.Reservation;
 import com.example.demo.domain.Screening;
 import com.example.demo.domain.Seat;
+import com.example.demo.dto.SeatLockInfo;
 import com.example.demo.dto.SeatStatusResponseDto;
 import com.example.demo.dto.SeatWithStatusDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
+
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +26,19 @@ public class BookingService {
     private final ReservationService reservationService;
     private final ScreeningService screeningService;
     private final ReservationNumberService reservationNumberService;
+    private final SeatSelectionCache seatSelectionCache;
 
+    @Transactional
+    public void selectSeat(Integer userId, Integer seatId, Integer screeningId){
+        SeatLockInfo lock = seatSelectionCache.getLock(screeningId, seatId);
+        if(lock != null)
+            throw new IllegalStateException("이미 선택된 좌석입니다. 다른 좌석을 선택해주세요.");
+
+        SeatLockInfo seatLockInfo = new SeatLockInfo(userId, System.currentTimeMillis());
+        seatSelectionCache.lockSeat(screeningId,seatId,seatLockInfo);
+    }
+
+    @Transactional
     public void reserve(Integer userId, RequestSeatIds requestSeatIds, Integer screeningId) throws Exception {
         assertSeatsAreAvailable(requestSeatIds,screeningId);
 
@@ -31,6 +47,7 @@ public class BookingService {
     }
 
     private void assertSeatsAreAvailable(RequestSeatIds requestSeatIds,Integer screeningId) throws Exception {
+
         assertSeatsNoConflict(requestSeatIds, screeningId);
         // 추후 좌석 유효 조건 추가 가능
     }

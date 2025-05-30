@@ -103,6 +103,7 @@ public class BookingServiceTest {
     }
 
 
+
     private void initReservedSeatIds() {
         reservedSeatIds.add(1);
         reservedSeatIds.add(2);

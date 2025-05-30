@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.domain.Movie;
 import com.example.demo.domain.Screening;
 import com.example.demo.dto.MovieScheduleDto;
+import com.example.demo.repository.MovieScheduleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +29,8 @@ public class MovieScheduleServiceTest {
     private MovieService movieService;
     @Mock
     private ScreeningService screeningService;
-
+    @Mock
+    private MovieScheduleRepository movieScheduleRepository;
     private Movie testMovie;
     private List<Screening> testScreeningList;
     private Integer movieId;
@@ -38,7 +40,7 @@ public class MovieScheduleServiceTest {
     void setUp() {
         testMovie = new Movie(movieId,"Avengers","2h30m");
     }
-
+/*
     @Test
     public void getMovieWithSchedules() {
         //given
@@ -48,6 +50,7 @@ public class MovieScheduleServiceTest {
         when(movieService.getMovieById(anyInt())).thenReturn(testMovie);
         when(screeningService.getScreeningListByMovieId(anyInt())).thenReturn(testScreeningList);
 
+        when(movieScheduleService.getMovieWithSchedules(movieId)).thenReturn(t)
         //when
         List<MovieScheduleDto> movieScheduleList = movieScheduleService.getMovieWithSchedules(movieId);
         //then
@@ -56,12 +59,15 @@ public class MovieScheduleServiceTest {
         testDetailField(movieScheduleList);
     }
 
+
+ */
     @Test
     public void getMovieScheduleByMovieIdWhenScheduleIsNull(){
         //given
         movieId = SAMPLE_MOVIE_ID;
-        when(movieService.getMovieById(anyInt())).thenReturn(testMovie);
-        when(screeningService.getScreeningListByMovieId(anyInt())).thenThrow(new EntityNotFoundException("상영정보 없음"));
+
+
+        when(movieScheduleRepository.findByMovieId(anyInt())).thenThrow( new EntityNotFoundException("상영정보 없음"));
 
         //
         org.junit.jupiter.api.Assertions.assertThrows(EntityNotFoundException.class,

@@ -21,8 +21,6 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.ok().body(e.getMessage());
         }
-
     }
-
 
 }

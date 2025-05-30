@@ -27,11 +27,12 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'com.github.f4b6a3:uuid-creator:5.3.2'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-
-	// actuator
+	implementation 'org.springframework.boot:spring-boot-starter-cache'
+	implementation 'com.github.ben-manes.caffeine:caffeine'
+	// build.gradle
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	// prometheus
-	implementation 'io.micrometer:micrometer-registry-prometheus'
+	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+
 
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
