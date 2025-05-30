@@ -29,30 +29,37 @@ public class BookingService {
     private final SeatSelectionCache seatSelectionCache;
 
     @Transactional
-    public void selectSeat(Integer userId, Integer seatId, Integer screeningId){
-        SeatLockInfo lock = seatSelectionCache.getLock(screeningId, seatId);
-        if(lock != null)
-            throw new IllegalStateException("이미 선택된 좌석입니다. 다른 좌석을 선택해주세요.");
+    public void selectSeat(Integer userId, RequestSeatIds requestSeatIds, Integer screeningId) throws Exception {
+        assertSeatsAreAvailable(requestSeatIds,screeningId,userId);
 
         SeatLockInfo seatLockInfo = new SeatLockInfo(userId, System.currentTimeMillis());
-        seatSelectionCache.lockSeat(screeningId,seatId,seatLockInfo);
+        for(Integer seatId : requestSeatIds.getIds()){
+            seatSelectionCache.lockSeat(screeningId,seatId,seatLockInfo);
+        }
     }
 
     @Transactional
     public void reserve(Integer userId, RequestSeatIds requestSeatIds, Integer screeningId) throws Exception {
-        assertSeatsAreAvailable(requestSeatIds,screeningId);
+        assertSeatsAreAvailable(requestSeatIds,screeningId,userId);
 
         List<Reservation> reservations = buildReservations(userId,requestSeatIds,screeningId);
         reservationService.saveReservations(reservations);
     }
 
-    private void assertSeatsAreAvailable(RequestSeatIds requestSeatIds,Integer screeningId) throws Exception {
-
-        assertSeatsNoConflict(requestSeatIds, screeningId);
+    private void assertSeatsAreAvailable(RequestSeatIds requestSeatIds,Integer screeningId,Integer userId) throws Exception {
+        assertSeatsNotSelected(requestSeatIds,screeningId,userId);
+        assertSeatsNotReserved(requestSeatIds, screeningId);
         // 추후 좌석 유효 조건 추가 가능
     }
-
-    private void assertSeatsNoConflict(RequestSeatIds requestSeatIds, Integer screeningId) throws Exception {
+    private void assertSeatsNotSelected(RequestSeatIds requestSeatIds,Integer screeningId,Integer userId) {
+        for(Integer seatId : requestSeatIds.getIds()){
+            SeatLockInfo lock = seatSelectionCache.getLock(screeningId, seatId);
+            if(lock != null && !lock.getUserId().equals(userId)){
+                throw new IllegalStateException(String.format("이미 선택된 좌석이 있습니다"));
+            }
+        }
+    }
+    private void assertSeatsNotReserved(RequestSeatIds requestSeatIds, Integer screeningId) throws Exception {
         Set<Integer> reservedSeatIds = reservationService.getReservedSeatIdByScreeningId(screeningId);
         if(reservedSeatIds.isEmpty()) return;
 
