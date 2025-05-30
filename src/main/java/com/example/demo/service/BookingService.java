@@ -33,8 +33,12 @@ public class BookingService {
         assertSeatsAreAvailable(requestSeatIds,screeningId,userId);
 
         SeatLockInfo seatLockInfo = new SeatLockInfo(userId, System.currentTimeMillis());
+        selectSeats(requestSeatIds, screeningId, seatLockInfo);
+    }
+
+    private void selectSeats(RequestSeatIds requestSeatIds, Integer screeningId, SeatLockInfo seatLockInfo) {
         for(Integer seatId : requestSeatIds.getIds()){
-            seatSelectionCache.lockSeat(screeningId,seatId,seatLockInfo);
+            seatSelectionCache.lockSeat(screeningId,seatId, seatLockInfo);
         }
     }
 
@@ -47,18 +51,27 @@ public class BookingService {
     }
 
     private void assertSeatsAreAvailable(RequestSeatIds requestSeatIds,Integer screeningId,Integer userId) throws Exception {
-        assertSeatsNotSelected(requestSeatIds,screeningId,userId);
+        assertSeatsNotSelectedByOthers(requestSeatIds,screeningId,userId);
         assertSeatsNotReserved(requestSeatIds, screeningId);
         // 추후 좌석 유효 조건 추가 가능
     }
-    private void assertSeatsNotSelected(RequestSeatIds requestSeatIds,Integer screeningId,Integer userId) {
+
+    private void assertSeatsNotSelectedByOthers(RequestSeatIds requestSeatIds, Integer screeningId, Integer userId) {
         for(Integer seatId : requestSeatIds.getIds()){
             SeatLockInfo lock = seatSelectionCache.getLock(screeningId, seatId);
-            if(lock != null && !lock.getUserId().equals(userId)){
+            if(isSelectedByOthers(userId, lock)) {
                 throw new IllegalStateException(String.format("이미 선택된 좌석이 있습니다"));
             }
         }
     }
+
+    private static boolean isSelectedByOthers(Integer userId, SeatLockInfo lock) {
+        if(lock != null && !lock.getUserId().equals(userId))
+            return true;
+        else
+            return false;
+    }
+
     private void assertSeatsNotReserved(RequestSeatIds requestSeatIds, Integer screeningId) throws Exception {
         Set<Integer> reservedSeatIds = reservationService.getReservedSeatIdByScreeningId(screeningId);
         if(reservedSeatIds.isEmpty()) return;

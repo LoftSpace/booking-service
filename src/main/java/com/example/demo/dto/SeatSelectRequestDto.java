@@ -10,6 +10,6 @@ import java.util.List;
 @NoArgsConstructor
 public class SeatSelectRequestDto {
     private Integer userId;
-    private RequestSeatIds seatIds;
+    private List<Integer> seatIds;
     private Integer screeningId;
 }

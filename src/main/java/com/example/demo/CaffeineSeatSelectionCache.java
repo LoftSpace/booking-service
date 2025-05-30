@@ -13,10 +13,10 @@ public class CaffeineSeatSelectionCache implements SeatSelectionCache{
     public SeatLockInfo lockSeat(Integer screeningId, Integer seatId,SeatLockInfo seatLockInfo) {
         return seatLockInfo;
     }
-
+    @Override
     @Cacheable(value = "seatLocks", key = "#screeningId + '-' + #seatId")
     public SeatLockInfo getLock(Integer screeningId, Integer seatId) {
-        return null;  // 캐시에 없으면 null 반환
+        return null;
     }
 
     @Override

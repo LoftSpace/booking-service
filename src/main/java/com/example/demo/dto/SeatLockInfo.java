@@ -8,4 +8,5 @@ import lombok.Getter;
 public class SeatLockInfo {
     private Integer userId;
     private long lockedAt;
+
 }

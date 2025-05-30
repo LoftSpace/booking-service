@@ -31,7 +31,7 @@ public class BookingController {
     @PostMapping("/seats/select")
     public ResponseEntity<?> selectSeat(@RequestBody SeatSelectRequestDto request){
         try{
-            bookingService.selectSeat(request.getUserId(),request.getSeatIds(),request.getScreeningId());
+            bookingService.selectSeat(request.getUserId(),new RequestSeatIds(request.getSeatIds()),request.getScreeningId());
             return ResponseEntity.ok().body("좌석 선택 완료");
         } catch (Exception e) {
             return ResponseEntity.ok().body(e.getMessage());
