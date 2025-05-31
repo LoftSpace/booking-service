@@ -62,6 +62,7 @@ public class BookingService {
             if(isSelectedByOthers(userId, lock)) {
                 throw new IllegalStateException(String.format("이미 선택된 좌석이 있습니다"));
             }
+
         }
     }
 

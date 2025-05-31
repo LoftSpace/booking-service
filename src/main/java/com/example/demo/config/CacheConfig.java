@@ -1,5 +1,7 @@
 package com.example.demo.config;
 
+import com.example.demo.dto.SeatLockInfo;
+import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -13,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 @EnableCaching
 @Configuration
 public class CacheConfig {
-
+    /*
     @Bean
     public CacheManager caffeineCacheManager() {
         CaffeineCacheManager manager = new CaffeineCacheManager("seatLocks");
@@ -22,5 +24,12 @@ public class CacheConfig {
         return manager;
     }
 
+     */
+    @Bean
+    public Cache<String, SeatLockInfo> seatLockCache() {
+        return Caffeine.newBuilder()
+                .expireAfterWrite(5, TimeUnit.MINUTES)
+                .build();
+    }
 
 }
