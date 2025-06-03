@@ -41,7 +41,7 @@ public class BookingController {
     @PostMapping("/reservations")
     public ResponseEntity<?> reserve(@RequestBody ReservationRequestDto request) {
         try{
-            bookingService.reserve(request.getUserId(),new RequestSeatIds(request.getSeatIds()),request.getScreeningId());
+            bookingService.reserveSeat(request.getUserId(),new RequestSeatIds(request.getSeatIds()),request.getScreeningId());
             return ResponseEntity.ok().body(String.format("예매 완료"));
         } catch(Exception e){
             return ResponseEntity.ok().body(e.getMessage());

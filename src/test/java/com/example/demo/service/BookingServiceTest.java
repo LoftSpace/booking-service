@@ -3,6 +3,7 @@ package com.example.demo.service;
 
 import com.example.demo.domain.RequestSeatIds;
 import com.example.demo.domain.Screening;
+import com.example.demo.factory.ReservationNumberGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,7 +33,7 @@ public class BookingServiceTest {
     @Mock
     private ScreeningService screeningService;
     @Mock
-    private ReservationNumberService reservationNumberService;
+    private ReservationNumberGenerator reservationNumberGenerator;
 
     static final int SAMPLE_USER_ID = 1;
     static final int SAMPLE_SCREENING_ID = 1024;
@@ -67,7 +68,7 @@ public class BookingServiceTest {
 
         //then
         Exception exception = assertThrows(Exception.class,
-                () -> bookingService.reserve(userId, requestSeatIds, screeningId));
+                () -> bookingService.reserveSeat(userId, requestSeatIds, screeningId));
         org.assertj.core.api.Assertions.assertThat(exception.getMessage()).isEqualTo("이미 예약 되어있는 좌석 : " + reservedSeatIds);
 
     }
@@ -87,7 +88,7 @@ public class BookingServiceTest {
 
         //then
         Assertions.assertDoesNotThrow(() ->
-                bookingService.reserve(userId, requestSeatIds,screeningId));
+                bookingService.reserveSeat(userId, requestSeatIds,screeningId));
     }
 
     // 요청 좌석이 없을 때

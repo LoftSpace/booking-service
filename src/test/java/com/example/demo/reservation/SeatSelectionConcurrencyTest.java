@@ -94,10 +94,11 @@ public class SeatSelectionConcurrencyTest {
 
 
 
-        for(int i = 0; i < threadCount; i ++){
+        for(int i = 0; i < 3; i ++){
             int userId = i;
             executorService.submit(() -> {
                 try{
+                    System.out.println(userId + "start");
                     if(userId==0)
                         bookingService.selectSeat(userId,requestSeatIds1,screeningId);
                     else if(userId == 1 )
@@ -107,7 +108,8 @@ public class SeatSelectionConcurrencyTest {
 
                     successCount.getAndIncrement();
                 } catch (Exception e){
-                    e.printStackTrace();
+                    //e.printStackTrace();
+                    System.out.println(userId + "failed");
                 } finally {
                     latch.countDown();
                 }

@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.factory;
 
 import com.github.f4b6a3.uuid.UuidCreator;
 import org.springframework.stereotype.Service;
@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import java.util.UUID;
 
 @Service
-public class ReservationNumberService {
+public class ReservationNumberGenerator {
     private static final String CHARACTERS = "01346789ABCDFGHJKMNPQRSTUVWXYZ";
     private static final int LENGTH = 5;
 

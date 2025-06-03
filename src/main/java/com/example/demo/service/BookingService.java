@@ -3,19 +3,20 @@ package com.example.demo.service;
 import com.example.demo.SeatSelectionCache;
 import com.example.demo.domain.RequestSeatIds;
 import com.example.demo.domain.Reservation;
-import com.example.demo.domain.Screening;
 import com.example.demo.domain.Seat;
 import com.example.demo.dto.SeatLockInfo;
 import com.example.demo.dto.SeatStatusResponseDto;
 import com.example.demo.dto.SeatWithStatusDto;
+import com.example.demo.factory.ReservationFactory;
+import com.example.demo.factory.ReservationNumberGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 @Service
@@ -25,15 +26,23 @@ public class BookingService {
     private final SeatService seatService;
     private final ReservationService reservationService;
     private final ScreeningService screeningService;
-    private final ReservationNumberService reservationNumberService;
     private final SeatSelectionCache seatSelectionCache;
+    private final ReservationFactory reservationFactory;
+
+    private ConcurrentHashMap<Integer,ReentrantLock> screeningLock = new ConcurrentHashMap<>();
 
     @Transactional
     public void selectSeat(Integer userId, RequestSeatIds requestSeatIds, Integer screeningId) throws Exception {
-        assertSeatsAreAvailable(requestSeatIds,screeningId,userId);
+        ReentrantLock lock = screeningLock.computeIfAbsent(screeningId, id -> new ReentrantLock());
+        lock.lock();
+        try {
+            assertSeatsAreAvailable(requestSeatIds, screeningId, userId);
 
-        SeatLockInfo seatLockInfo = new SeatLockInfo(userId, System.currentTimeMillis());
-        selectSeats(requestSeatIds, screeningId, seatLockInfo);
+            SeatLockInfo seatLockInfo = new SeatLockInfo(userId, System.currentTimeMillis());
+            selectSeats(requestSeatIds, screeningId, seatLockInfo);
+        } finally {
+            lock.unlock();
+        }
     }
 
     private void selectSeats(RequestSeatIds requestSeatIds, Integer screeningId, SeatLockInfo seatLockInfo) {
@@ -43,10 +52,10 @@ public class BookingService {
     }
 
     @Transactional
-    public void reserve(Integer userId, RequestSeatIds requestSeatIds, Integer screeningId) throws Exception {
+    public void reserveSeat(Integer userId, RequestSeatIds requestSeatIds, Integer screeningId) throws Exception {
         assertSeatsAreAvailable(requestSeatIds,screeningId,userId);
 
-        List<Reservation> reservations = buildReservations(userId,requestSeatIds,screeningId);
+        List<Reservation> reservations = reservationFactory.buildReservations(userId, requestSeatIds, screeningId);
         reservationService.saveReservations(reservations);
     }
 
@@ -60,7 +69,7 @@ public class BookingService {
         for(Integer seatId : requestSeatIds.getIds()){
             SeatLockInfo lock = seatSelectionCache.getLock(screeningId, seatId);
             if(isSelectedByOthers(userId, lock)) {
-                throw new IllegalStateException(String.format("이미 선택된 좌석이 있습니다"));
+                throw new IllegalStateException(String.format("이미 선택된 좌석이 있습니다" + seatId));
             }
 
         }
@@ -83,29 +92,6 @@ public class BookingService {
             throw new Exception(String.format("이미 예약 되어있는 좌석 : " + conflictSeats));
     }
 
-    private List<Reservation> buildReservations(Integer userId,RequestSeatIds requestSeatIds, Integer screeningId) {
-        String reservedTime = getCurrentTime();
-        String reservationNumber = reservationNumberService.generateReservationNumber(userId,reservedTime,screeningId);
-
-        Screening screening = screeningService.getScreeningById(screeningId);
-        // 이 부분은 Reservation의 책임이지 않는가?
-        return requestSeatIds.getIds()
-                .stream()
-                .map(seatId -> Reservation.builder()
-                        .reservationNumber(reservationNumber)
-                        .userId(userId)
-                        .reservedDate(reservedTime)
-                        .seatId(seatId)
-                        .movieId(screening.getMovieId())
-                        .screeningId(screening.getScreeningId())
-                        .build())
-                .toList();
-    }
-
-    private static String getCurrentTime() {
-        LocalDateTime now = LocalDateTime.now();
-        return now.format(DateTimeFormatter.ofPattern("yyyyMMdd-HHmmss"));
-    }
 
 
     // 유연한 변경을 더 중요시하여 조인 + 서브쿼리 대신 비즈니스 로직으로 SeatStatus를 조합한다.

@@ -9,7 +9,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +43,7 @@ public class ReservationConcurrencyTest {
             int userId = i;
             executorService.submit(() -> {
                 try{
-                    bookingService.reserve(userId,requestSeatIds,screeningId);
+                    bookingService.reserveSeat(userId,requestSeatIds,screeningId);
                 } catch (Exception e){
                     e.printStackTrace();
                 } finally {
@@ -72,8 +71,8 @@ public class ReservationConcurrencyTest {
         RequestSeatIds firstRequestSeatIds = new RequestSeatIds(seatIds1);
         RequestSeatIds secondRequestSeatIds = new RequestSeatIds(seatIds2);
 
-        bookingService.reserve(user1,firstRequestSeatIds,screeningId);
-        bookingService.reserve(user2,secondRequestSeatIds,screeningId);
+        bookingService.reserveSeat(user1,firstRequestSeatIds,screeningId);
+        bookingService.reserveSeat(user2,secondRequestSeatIds,screeningId);
 
         reservationRepository.findAllByScreeningId(screeningId);
 
