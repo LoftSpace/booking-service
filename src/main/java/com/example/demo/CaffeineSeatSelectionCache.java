@@ -16,13 +16,19 @@ public class CaffeineSeatSelectionCache implements SeatSelectionCache{
     private final Cache<String, SeatLockInfo> cache;
 
     @Override
-    public SeatLockInfo lockSeat(Integer screeningId, Integer seatId,SeatLockInfo seatLockInfo) {
+    public void lockSeat(Integer screeningId, Integer seatId,SeatLockInfo seatLockInfo) {
         String key = screeningId + "-" + seatId;
         SeatLockInfo newLock = new SeatLockInfo(seatLockInfo.getUserId(), System.currentTimeMillis());
-        SeatLockInfo existing = cache.asMap().putIfAbsent(key, newLock);
-        if(existing != null)
-            throw new IllegalStateException("이미 선택된 좌석입니다. 락 획득 실패");
-        return existing;
+
+        if(isSeatLockExists(key, newLock))
+            throw new IllegalStateException("이미 선택된 좌석입니다.");
+
+    }
+
+    private boolean isSeatLockExists(String key, SeatLockInfo newLock) {
+        if(cache.asMap().putIfAbsent(key, newLock) == null)
+            return false;
+        return true;
     }
 
     @Override

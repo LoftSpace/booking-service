@@ -31,7 +31,7 @@ public class SeatSelectionConcurrencyTest {
 
     private List<Integer> seatIds1 = new ArrayList<>();
     private List<Integer> seatIds2 = new ArrayList<>();
-    private  Integer screeningId = 1026;
+    private  Integer screeningId = 1039;
     private ExecutorService executorService = Executors.newFixedThreadPool(100);
     private int threadCount = 2;
     private CountDownLatch latch = new CountDownLatch(threadCount);
@@ -95,20 +95,20 @@ public class SeatSelectionConcurrencyTest {
 
 
         for(int i = 0; i < 3; i ++){
-            int userId = i;
+            int userId = i + 1;
             executorService.submit(() -> {
                 try{
                     System.out.println(userId + "start");
-                    if(userId==0)
+                    if(userId == 1)
                         bookingService.selectSeat(userId,requestSeatIds1,screeningId);
-                    else if(userId == 1 )
-                        bookingService.selectSeat(userId,requestSeatIds2,screeningId);
                     else if(userId == 2 )
+                        bookingService.selectSeat(userId,requestSeatIds2,screeningId);
+                    else if(userId == 3 )
                         bookingService.selectSeat(userId,requestSeatIds3,screeningId);
 
                     successCount.getAndIncrement();
                 } catch (Exception e){
-                    //e.printStackTrace();
+                    e.printStackTrace();
                     System.out.println(userId + "failed");
                 } finally {
                     latch.countDown();

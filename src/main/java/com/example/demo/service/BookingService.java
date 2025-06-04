@@ -8,7 +8,6 @@ import com.example.demo.dto.SeatLockInfo;
 import com.example.demo.dto.SeatStatusResponseDto;
 import com.example.demo.dto.SeatWithStatusDto;
 import com.example.demo.factory.ReservationFactory;
-import com.example.demo.factory.ReservationNumberGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +39,7 @@ public class BookingService {
 
             SeatLockInfo seatLockInfo = new SeatLockInfo(userId, System.currentTimeMillis());
             selectSeats(requestSeatIds, screeningId, seatLockInfo);
+
         } finally {
             lock.unlock();
         }
@@ -67,19 +67,9 @@ public class BookingService {
 
     private void assertSeatsNotSelectedByOthers(RequestSeatIds requestSeatIds, Integer screeningId, Integer userId) {
         for(Integer seatId : requestSeatIds.getIds()){
-            SeatLockInfo lock = seatSelectionCache.getLock(screeningId, seatId);
-            if(isSelectedByOthers(userId, lock)) {
-                throw new IllegalStateException(String.format("이미 선택된 좌석이 있습니다" + seatId));
-            }
-
+            if(seatSelectionCache.getLock(screeningId,seatId) != null)
+                throw new IllegalStateException(String.format("이미 선택된 좌석이 있습니다 : " + seatId));
         }
-    }
-
-    private static boolean isSelectedByOthers(Integer userId, SeatLockInfo lock) {
-        if(lock != null && !lock.getUserId().equals(userId))
-            return true;
-        else
-            return false;
     }
 
     private void assertSeatsNotReserved(RequestSeatIds requestSeatIds, Integer screeningId) throws Exception {
