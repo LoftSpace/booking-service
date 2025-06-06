@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.SeatSelectionCache;
 import com.example.demo.domain.RequestSeatIds;
 import com.example.demo.domain.Reservation;
+import com.example.demo.domain.ScreeningSeatLock;
 import com.example.demo.domain.Seat;
 import com.example.demo.dto.SeatLockInfo;
 import com.example.demo.dto.SeatStatusResponseDto;
@@ -12,10 +13,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReentrantLock;
+
 
 
 @Service
@@ -27,22 +28,17 @@ public class BookingService {
     private final ScreeningService screeningService;
     private final SeatSelectionCache seatSelectionCache;
     private final ReservationFactory reservationFactory;
-
-    private ConcurrentHashMap<Integer,ReentrantLock> screeningLock = new ConcurrentHashMap<>();
+    private final ScreeningSeatLock screeningSeatLock;
 
     @Transactional
-    public void selectSeat(Integer userId, RequestSeatIds requestSeatIds, Integer screeningId) throws Exception {
-        ReentrantLock lock = screeningLock.computeIfAbsent(screeningId, id -> new ReentrantLock());
-        lock.lock();
-        try {
+    public void selectSeat(Integer userId, RequestSeatIds requestSeatIds, Integer screeningId){
+        screeningSeatLock.withLock(screeningId,() -> {
             assertSeatsAreAvailable(requestSeatIds, screeningId, userId);
 
             SeatLockInfo seatLockInfo = new SeatLockInfo(userId, System.currentTimeMillis());
             selectSeats(requestSeatIds, screeningId, seatLockInfo);
+        });
 
-        } finally {
-            lock.unlock();
-        }
     }
 
     private void selectSeats(RequestSeatIds requestSeatIds, Integer screeningId, SeatLockInfo seatLockInfo) {
@@ -59,27 +55,33 @@ public class BookingService {
         reservationService.saveReservations(reservations);
     }
 
-    private void assertSeatsAreAvailable(RequestSeatIds requestSeatIds,Integer screeningId,Integer userId) throws Exception {
-        assertSeatsNotSelectedByOthers(requestSeatIds,screeningId,userId);
+    private void assertSeatsAreAvailable(RequestSeatIds requestSeatIds,Integer screeningId,Integer userId) {
+        assertSeatsNotSelectedByOthers(requestSeatIds, screeningId, userId);
         assertSeatsNotReserved(requestSeatIds, screeningId);
         // 추후 좌석 유효 조건 추가 가능
     }
 
-    private void assertSeatsNotSelectedByOthers(RequestSeatIds requestSeatIds, Integer screeningId, Integer userId) {
+    private void assertSeatsNotSelectedByOthers(RequestSeatIds requestSeatIds, Integer screeningId, Integer userId){
         for(Integer seatId : requestSeatIds.getIds()){
-            if(seatSelectionCache.getLock(screeningId,seatId) != null)
+            SeatLockInfo lock = seatSelectionCache.getLock(screeningId, seatId);
+
+            if(isSelectedByOtherUser(userId, lock))
                 throw new IllegalStateException(String.format("이미 선택된 좌석이 있습니다 : " + seatId));
         }
     }
 
-    private void assertSeatsNotReserved(RequestSeatIds requestSeatIds, Integer screeningId) throws Exception {
+    private static boolean isSelectedByOtherUser(Integer userId, SeatLockInfo lock) {
+        return lock != null && lock.getUserId() != userId;
+    }
+
+    private void assertSeatsNotReserved(RequestSeatIds requestSeatIds, Integer screeningId)  {
         Set<Integer> reservedSeatIds = reservationService.getReservedSeatIdByScreeningId(screeningId);
         if(reservedSeatIds.isEmpty()) return;
 
         List<Integer> conflictSeats = requestSeatIds.getConflicts(reservedSeatIds);
 
         if(!conflictSeats.isEmpty())
-            throw new Exception(String.format("이미 예약 되어있는 좌석 : " + conflictSeats));
+            throw new IllegalStateException(String.format("이미 예약 되어있는 좌석 : " + conflictSeats));
     }
 
 
