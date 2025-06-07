@@ -5,17 +5,17 @@ import com.example.demo.dto.ReservationRequestDto;
 import com.example.demo.dto.SeatSelectRequestDto;
 import com.example.demo.service.BookingService;
 import com.example.demo.service.MovieScheduleService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/bookings")
 @RequiredArgsConstructor
 public class BookingController {
-
-
     private final BookingService bookingService;
     private final MovieScheduleService movieScheduleService;
 
@@ -28,6 +28,7 @@ public class BookingController {
         }
 
     }
+
     @PostMapping("/seats/select")
     public ResponseEntity<?> selectSeat(@RequestBody SeatSelectRequestDto request){
         try{
@@ -38,11 +39,12 @@ public class BookingController {
         }
 
     }
+
     @PostMapping("/reservations")
     public ResponseEntity<?> reserve(@RequestBody ReservationRequestDto request) {
         try{
-            bookingService.reserveSeat(request.getUserId(),new RequestSeatIds(request.getSeatIds()),request.getScreeningId());
-            return ResponseEntity.ok().body(String.format("예매 완료"));
+            bookingService.reserveSeat(request.getUserId(),request.getSeatIds(),request.getScreeningId());
+            return ResponseEntity.ok().body("예매 완료");
         } catch(Exception e){
             return ResponseEntity.ok().body(e.getMessage());
         }
@@ -57,6 +59,12 @@ public class BookingController {
         }
     }
 
-
-
+    @GetMapping("/reservations/{reservationId}")
+    public ResponseEntity<?> getReservationInfo(@PathVariable("reservationId") String reservationId){
+        try{
+            return ResponseEntity.ok(bookingService.getReservationInfo(reservationId));
+        } catch(Exception e) {
+            return ResponseEntity.ok().body(e.getMessage());
+        }
+    }
 }

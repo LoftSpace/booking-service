@@ -14,6 +14,7 @@ import java.util.Set;
 public interface ReservationRepository extends JpaRepository<Reservation,Long> {
     @Query("SELECT r.seatId FROM Reservation r WHERE r.screeningId = :screeningId")
     Set<Integer> findReservedSeatIdByScreeningId(@Param("screeningId") Integer screeningId);
+
     @Query("""
     SELECT new com.example.demo.domain.ReservationInfo
     (
@@ -29,6 +30,22 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
     WHERE r.userId = :userId
 """)
     List<ReservationInfo> findReservationInfoByUserId(@Param("userId") Integer userId);
+
+    @Query("""
+    SELECT new com.example.demo.domain.ReservationInfo
+    (
+        r.id, r.reservationNumber, r.reservedDate,
+        s.id, s.startTime,
+        m.id, m.movieName,
+        st.id
+    )
+    FROM Reservation r
+    JOIN Screening s ON r.screeningId = s.id
+    JOIN Movie m ON r.movieId = m.id
+    JOIN Seat st ON r.seatId = st.id
+    WHERE r.reservation_number = :reservationNumber
+    """)
+    ReservationInfo findReservationInfoByReservationNumber(@Param("reservationNumber") String reservationNumber);
 
     List<Reservation> findAllByScreeningId(Integer screeningId);
     List<Reservation> findByUserId(Integer userId);

@@ -1,17 +1,13 @@
-package com.example.demo;
+package com.example.demo.cache;
 
 import com.example.demo.dto.SeatLockInfo;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.caffeine.CaffeineCache;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class CaffeineSeatSelectionCache implements SeatSelectionCache{
+public class CaffeineSeatSelectionCache implements SeatSelectionCache {
 
     private final Cache<String, SeatLockInfo> cache;
 
@@ -26,9 +22,7 @@ public class CaffeineSeatSelectionCache implements SeatSelectionCache{
     }
 
     private boolean isSeatLockExists(String key, SeatLockInfo newLock) {
-        if(cache.asMap().putIfAbsent(key, newLock) == null)
-            return false;
-        return true;
+        return cache.asMap().putIfAbsent(key, newLock) != null;
     }
 
     @Override

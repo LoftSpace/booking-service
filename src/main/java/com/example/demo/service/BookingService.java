@@ -1,10 +1,7 @@
 package com.example.demo.service;
 
-import com.example.demo.SeatSelectionCache;
-import com.example.demo.domain.RequestSeatIds;
-import com.example.demo.domain.Reservation;
-import com.example.demo.domain.ScreeningSeatLock;
-import com.example.demo.domain.Seat;
+import com.example.demo.cache.SeatSelectionCache;
+import com.example.demo.domain.*;
 import com.example.demo.dto.SeatLockInfo;
 import com.example.demo.dto.SeatStatusResponseDto;
 import com.example.demo.dto.SeatWithStatusDto;
@@ -116,4 +113,7 @@ public class BookingService {
         return allSeatsWithStatus;
     }
 
+    public ReservationInfo getReservationInfo(String reservationInfo){
+        return reservationService.getReservationInfoByReservationId(reservationInfo);
+    }
 }

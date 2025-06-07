@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.cache;
 
 import com.example.demo.dto.SeatLockInfo;
 

@@ -13,11 +13,7 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class ReservationService {
-    @Autowired
     private final ReservationRepository reservationRepository;
-
-    @Autowired
-    private final ScreeningService screeningService;
 
     public Set<Integer> getReservedSeatIdByScreeningId(Integer screeningId){
         return reservationRepository.findReservedSeatIdByScreeningId(screeningId);
@@ -35,4 +31,7 @@ public class ReservationService {
         reservationRepository.saveAll(reservations);
     }
 
+    public ReservationInfo getReservationInfoByReservationId(String reservationId){
+        return reservationRepository.findReservationInfoByReservationNumber(reservationId);
+    }
 }
