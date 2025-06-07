@@ -45,6 +45,7 @@ public class BookingController {
     @PostMapping("/reservations")
     public ResponseEntity<?> reserve(@RequestBody ReservationRequestDto request) {
         try{
+            // 유효성 검사 로직 중복 방지를 위해 클래스로 감싸서 보낸다. 또한 요청 좌석 객체는 충돌 검사 책임도 맡음.
             String reservationNumber = bookingService.reserveSeat(request.getUserId(), new RequestSeats(request.getSeatIds()), request.getScreeningId());
             return ResponseEntity.ok(
                     new ReservationResponseDto("예매 완료",reservationNumber)
