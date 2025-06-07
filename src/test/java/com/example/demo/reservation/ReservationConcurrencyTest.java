@@ -1,7 +1,7 @@
 package com.example.demo.reservation;
 
 
-import com.example.demo.domain.RequestSeatIds;
+import com.example.demo.domain.RequestSeats;
 import com.example.demo.domain.Reservation;
 import com.example.demo.repository.ReservationRepository;
 import com.example.demo.service.BookingService;
@@ -37,13 +37,13 @@ public class ReservationConcurrencyTest {
 
         for(int i = 0; i < 2;i ++)
             seatIds1.add(i);
-        RequestSeatIds requestSeatIds = new RequestSeatIds(seatIds1);
+        RequestSeats requestSeats = new RequestSeats(seatIds1);
 
         for(int i = 0; i < threadCount; i ++){
             int userId = i;
             executorService.submit(() -> {
                 try{
-                    bookingService.reserveSeat(userId,requestSeatIds,screeningId);
+                    bookingService.reserveSeat(userId, requestSeats,screeningId);
                 } catch (Exception e){
                     e.printStackTrace();
                 } finally {
@@ -68,11 +68,11 @@ public class ReservationConcurrencyTest {
         seatIds2.add(2);
         seatIds2.add(3);
 
-        RequestSeatIds firstRequestSeatIds = new RequestSeatIds(seatIds1);
-        RequestSeatIds secondRequestSeatIds = new RequestSeatIds(seatIds2);
+        RequestSeats firstRequestSeats = new RequestSeats(seatIds1);
+        RequestSeats secondRequestSeats = new RequestSeats(seatIds2);
 
-        bookingService.reserveSeat(user1,firstRequestSeatIds,screeningId);
-        bookingService.reserveSeat(user2,secondRequestSeatIds,screeningId);
+        bookingService.reserveSeat(user1, firstRequestSeats,screeningId);
+        bookingService.reserveSeat(user2, secondRequestSeats,screeningId);
 
         reservationRepository.findAllByScreeningId(screeningId);
 

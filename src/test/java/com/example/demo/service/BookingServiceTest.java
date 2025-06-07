@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 
-import com.example.demo.domain.RequestSeatIds;
+import com.example.demo.domain.RequestSeats;
 import com.example.demo.domain.Screening;
 import com.example.demo.factory.ReservationNumberGenerator;
 import org.junit.jupiter.api.Assertions;
@@ -62,13 +62,13 @@ public class BookingServiceTest {
         initReservedSeatIds();
         for(int i = 0; i < 5; i++)
             rawRequestSeatIds.add(i);
-        RequestSeatIds requestSeatIds = new RequestSeatIds(rawRequestSeatIds);
+        RequestSeats requestSeats = new RequestSeats(rawRequestSeatIds);
 
         when(reservationService.getReservedSeatIdByScreeningId(screeningId)).thenReturn(reservedSeatIds);
 
         //then
         Exception exception = assertThrows(Exception.class,
-                () -> bookingService.reserveSeat(userId, requestSeatIds, screeningId));
+                () -> bookingService.reserveSeat(userId, requestSeats, screeningId));
         org.assertj.core.api.Assertions.assertThat(exception.getMessage()).isEqualTo("이미 예약 되어있는 좌석 : " + reservedSeatIds);
 
     }
@@ -80,7 +80,7 @@ public class BookingServiceTest {
 
         rawRequestSeatIds.add(4);
         rawRequestSeatIds.add(5);
-        RequestSeatIds requestSeatIds = new RequestSeatIds(rawRequestSeatIds);
+        RequestSeats requestSeats = new RequestSeats(rawRequestSeatIds);
         initReservedSeatIds();
 
         when(screeningService.getScreeningById(anyInt())).thenReturn(testScreening);
@@ -88,7 +88,7 @@ public class BookingServiceTest {
 
         //then
         Assertions.assertDoesNotThrow(() ->
-                bookingService.reserveSeat(userId, requestSeatIds,screeningId));
+                bookingService.reserveSeat(userId, requestSeats,screeningId));
     }
 
     // 요청 좌석이 없을 때
@@ -99,7 +99,7 @@ public class BookingServiceTest {
 
         //then
         assertThrows(IllegalArgumentException.class, () -> {
-            new RequestSeatIds(rawRequestSeatIds);
+            new RequestSeats(rawRequestSeatIds);
         });
     }
 

@@ -1,6 +1,5 @@
 package com.example.demo.dto;
 
-import com.example.demo.domain.RequestSeatIds;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

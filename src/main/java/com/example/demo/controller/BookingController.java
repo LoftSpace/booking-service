@@ -1,15 +1,13 @@
 package com.example.demo.controller;
 
-import com.example.demo.domain.RequestSeatIds;
+import com.example.demo.domain.RequestSeats;
 import com.example.demo.dto.ReservationRequestDto;
 import com.example.demo.dto.SeatSelectRequestDto;
 import com.example.demo.service.BookingService;
 import com.example.demo.service.MovieScheduleService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -32,7 +30,7 @@ public class BookingController {
     @PostMapping("/seats/select")
     public ResponseEntity<?> selectSeat(@RequestBody SeatSelectRequestDto request){
         try{
-            bookingService.selectSeat(request.getUserId(),new RequestSeatIds(request.getSeatIds()),request.getScreeningId());
+            bookingService.selectSeat(request.getUserId(),new RequestSeats(request.getSeatIds()),request.getScreeningId());
             return ResponseEntity.ok().body("좌석 선택 완료");
         } catch (Exception e) {
             return ResponseEntity.ok().body(e.getMessage());

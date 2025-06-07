@@ -1,6 +1,5 @@
 package com.example.demo.reservation;
 
-import com.example.demo.domain.RequestSeatIds;
 import com.example.demo.service.BookingService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,7 @@ public class ReservationTest {
         userId = 1;
         requestSeatIds.add(1);
         screeningId = 1030;
-        RequestSeatIds
+        RequestSeats
         bookingService.reserveSeat(userId,requestSeatIds,screeningId);
         //
         bookingService.getReservationInfo()

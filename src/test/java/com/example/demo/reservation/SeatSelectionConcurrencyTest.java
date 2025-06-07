@@ -1,16 +1,14 @@
 package com.example.demo.reservation;
 
-import com.example.demo.domain.RequestSeatIds;
+import com.example.demo.domain.RequestSeats;
 import com.example.demo.repository.ReservationRepository;
 import com.example.demo.service.BookingService;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,16 +48,16 @@ public class SeatSelectionConcurrencyTest {
         seatIds2.add(3);
         seatIds2.add(4);
         seatIds2.add(1);
-        RequestSeatIds requestSeatIds1 = new RequestSeatIds(seatIds1);
-        RequestSeatIds requestSeatIds2 = new RequestSeatIds(seatIds2);
+        RequestSeats requestSeats1 = new RequestSeats(seatIds1);
+        RequestSeats requestSeats2 = new RequestSeats(seatIds2);
         for(int i = 0; i < threadCount; i ++){
             int userId = i;
             executorService.submit(() -> {
                 try{
                     if(userId==0)
-                        bookingService.selectSeat(userId,requestSeatIds1,screeningId);
+                        bookingService.selectSeat(userId, requestSeats1,screeningId);
                     else
-                        bookingService.selectSeat(userId,requestSeatIds2,screeningId);
+                        bookingService.selectSeat(userId, requestSeats2,screeningId);
                     successCount.getAndIncrement();
                 } catch (Exception e){
                     e.printStackTrace();
@@ -88,9 +86,9 @@ public class SeatSelectionConcurrencyTest {
         seatIds3.add(7);
 
 
-        RequestSeatIds requestSeatIds1 = new RequestSeatIds(seatIds1);
-        RequestSeatIds requestSeatIds2 = new RequestSeatIds(seatIds2);
-        RequestSeatIds requestSeatIds3 = new RequestSeatIds(seatIds3);
+        RequestSeats requestSeats1 = new RequestSeats(seatIds1);
+        RequestSeats requestSeats2 = new RequestSeats(seatIds2);
+        RequestSeats requestSeats3 = new RequestSeats(seatIds3);
 
 
 
@@ -100,11 +98,11 @@ public class SeatSelectionConcurrencyTest {
                 try{
                     System.out.println(userId + "start");
                     if(userId == 1)
-                        bookingService.selectSeat(userId,requestSeatIds1,screeningId);
+                        bookingService.selectSeat(userId, requestSeats1,screeningId);
                     else if(userId == 2 )
-                        bookingService.selectSeat(userId,requestSeatIds2,screeningId);
+                        bookingService.selectSeat(userId, requestSeats2,screeningId);
                     else if(userId == 3 )
-                        bookingService.selectSeat(userId,requestSeatIds3,screeningId);
+                        bookingService.selectSeat(userId, requestSeats3,screeningId);
 
                     successCount.getAndIncrement();
                 } catch (Exception e){

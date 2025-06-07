@@ -1,16 +1,14 @@
 package com.example.demo.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.Set;
 @Getter
-public class RequestSeatIds {
+public class RequestSeats {
     private List<Integer> ids;
 
-    public RequestSeatIds(List<Integer> ids){
+    public RequestSeats(List<Integer> ids){
         if(ids == null || ids.isEmpty())
             throw new IllegalArgumentException("좌석을 선택해야 합니다");
 

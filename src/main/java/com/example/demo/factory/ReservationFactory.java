@@ -1,6 +1,6 @@
 package com.example.demo.factory;
 
-import com.example.demo.domain.RequestSeatIds;
+import com.example.demo.domain.RequestSeats;
 import com.example.demo.domain.Reservation;
 import com.example.demo.domain.Screening;
 import com.example.demo.service.ScreeningService;
@@ -17,13 +17,13 @@ public class ReservationFactory {
     private final ReservationNumberGenerator reservationNumberGenerator;
     private final ScreeningService screeningService;
 
-    public List<Reservation> buildReservations(Integer userId, RequestSeatIds requestSeatIds, Integer screeningId) {
+    public List<Reservation> buildReservations(Integer userId, RequestSeats requestSeats, Integer screeningId) {
         String reservedTime = getCurrentTime();
         String reservationNumber = reservationNumberGenerator.generateReservationNumber(userId,reservedTime,screeningId);
 
         Screening screening = screeningService.getScreeningById(screeningId);
         // 이 부분은 Reservation의 책임이지 않는가?
-        return requestSeatIds.getIds()
+        return requestSeats.getIds()
                 .stream()
                 .map(seatId -> Reservation.builder()
                         .reservationNumber(reservationNumber)
