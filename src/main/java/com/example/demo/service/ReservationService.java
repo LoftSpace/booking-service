@@ -27,8 +27,8 @@ public class ReservationService {
         return reservationRepository.findAllByScreeningId(screeningId);
     }
 
-    public void saveReservations(List<Reservation> reservations){
-        reservationRepository.saveAll(reservations);
+    public List<Reservation> saveReservations(List<Reservation> reservations){
+        return reservationRepository.saveAll(reservations);
     }
 
     public ReservationInfo getReservationInfoByReservationId(String reservationId){

@@ -14,9 +14,7 @@ public class RequestSeats {
 
         this.ids = ids;
     }
-    public boolean isEmpty() {
-        return ids.isEmpty();
-    }
+
     public List<Integer> getConflicts(Set<Integer> reservedSeats) {
         return ids.stream().filter(reservedSeats::contains).toList();
     }

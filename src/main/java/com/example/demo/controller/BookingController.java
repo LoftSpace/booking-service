@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.domain.RequestSeats;
+import com.example.demo.domain.Reservation;
 import com.example.demo.dto.ReservationRequestDto;
+import com.example.demo.dto.ReservationResponseDto;
 import com.example.demo.dto.SeatSelectRequestDto;
 import com.example.demo.service.BookingService;
 import com.example.demo.service.MovieScheduleService;
@@ -9,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/bookings")
@@ -41,8 +45,10 @@ public class BookingController {
     @PostMapping("/reservations")
     public ResponseEntity<?> reserve(@RequestBody ReservationRequestDto request) {
         try{
-            bookingService.reserveSeat(request.getUserId(),request.getSeatIds(),request.getScreeningId());
-            return ResponseEntity.ok().body("예매 완료");
+            String reservationNumber = bookingService.reserveSeat(request.getUserId(), new RequestSeats(request.getSeatIds()), request.getScreeningId());
+            return ResponseEntity.ok(
+                    new ReservationResponseDto("예매 완료",reservationNumber)
+            );
         } catch(Exception e){
             return ResponseEntity.ok().body(e.getMessage());
         }
