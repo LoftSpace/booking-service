@@ -45,11 +45,16 @@ public class BookingService {
     }
 
     @Transactional
-    public void reserveSeat(Integer userId, RequestSeats requestSeats, Integer screeningId) throws Exception {
+    public String reserveSeat(Integer userId, RequestSeats requestSeats, Integer screeningId){
         assertSeatsAreAvailable(requestSeats,screeningId,userId);
 
         List<Reservation> reservations = reservationFactory.buildReservations(userId, requestSeats, screeningId);
-        reservationService.saveReservations(reservations);
+        List<Reservation> savedReservations = reservationService.saveReservations(reservations);
+        return getReservationNumber(savedReservations);
+    }
+
+    private static String getReservationNumber(List<Reservation> savedReservations) {
+        return savedReservations.get(0).getReservationNumber();
     }
 
     private void assertSeatsAreAvailable(RequestSeats requestSeats, Integer screeningId, Integer userId) {
