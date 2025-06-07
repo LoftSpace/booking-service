@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
+import java.util.Optional;
 import java.util.Set;
 
 public interface ReservationRepository extends JpaRepository<Reservation,Long> {
@@ -43,9 +44,9 @@ public interface ReservationRepository extends JpaRepository<Reservation,Long> {
     JOIN Screening s ON r.screeningId = s.id
     JOIN Movie m ON r.movieId = m.id
     JOIN Seat st ON r.seatId = st.id
-    WHERE r.reservation_number = :reservationNumber
+    WHERE r.reservationNumber = :reservationNumber
     """)
-    ReservationInfo findReservationInfoByReservationNumber(@Param("reservationNumber") String reservationNumber);
+    Optional<ReservationInfo> findReservationInfoByReservationNumber(@Param("reservationNumber") String reservationNumber);
 
     List<Reservation> findAllByScreeningId(Integer screeningId);
     List<Reservation> findByUserId(Integer userId);

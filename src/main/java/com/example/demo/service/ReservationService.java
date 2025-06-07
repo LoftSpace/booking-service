@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.domain.Reservation;
 import com.example.demo.domain.ReservationInfo;
 import com.example.demo.repository.ReservationRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ public class ReservationService {
     }
 
     public ReservationInfo getReservationInfoByReservationId(String reservationId){
-        return reservationRepository.findReservationInfoByReservationNumber(reservationId);
+        return reservationRepository.findReservationInfoByReservationNumber(reservationId)
+                .orElseThrow(() ->  new EntityNotFoundException("유효하지 않은 예매번호"));
     }
 }
