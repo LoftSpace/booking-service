@@ -28,7 +28,7 @@ public class CacheConfig {
     @Bean
     public Cache<String, SeatLockInfo> seatLockCache() {
         return Caffeine.newBuilder()
-                .expireAfterWrite(5, TimeUnit.MINUTES)
+                .expireAfterWrite(100, TimeUnit.MINUTES)
                 .build();
     }
 

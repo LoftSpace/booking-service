@@ -13,14 +13,16 @@ public class Seat {
     @Id
     private Integer seatId;
 
-    private Integer row;
-    private Integer col;
+    private Integer rowId;
+    private Integer colId;
+    private Integer gradeId;
 
 
-    @Enumerated(EnumType.STRING)
-    private SeatGrade grade;
+    public SeatGrade getSeatGrade() {
+        return SeatGrade.fromId(this.gradeId);
+    }
 
     public Integer getPrice() {
-        return grade.getPrice();
+        return getSeatGrade().getPrice();
     }
 }

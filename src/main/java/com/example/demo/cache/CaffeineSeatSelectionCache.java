@@ -3,9 +3,15 @@ package com.example.demo.cache;
 import com.example.demo.dto.SeatLockInfo;
 import com.github.benmanes.caffeine.cache.Cache;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Component
+@Primary
 @RequiredArgsConstructor
 public class CaffeineSeatSelectionCache implements SeatSelectionCache {
 
@@ -33,5 +39,16 @@ public class CaffeineSeatSelectionCache implements SeatSelectionCache {
     @Override
     public void releaseSeat() {
 
+    }
+    @Override
+    public Set<Integer> getAllLockByScreeningId(Integer screeningId){
+        String prefix = screeningId + "-";
+        return cache.asMap().keySet().stream()
+                .filter(key -> key.startsWith(prefix))
+                .map(key -> {
+                    String[] split = key.split("-");
+                    return Integer.parseInt(split[1]);
+                })
+                .collect(Collectors.toSet());
     }
 }

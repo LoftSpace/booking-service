@@ -7,6 +7,7 @@ import com.example.demo.dto.SeatStatusResponseDto;
 import com.example.demo.dto.SeatWithStatusDto;
 import com.example.demo.factory.ReservationFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ public class BookingService {
     private final SeatService seatService;
     private final ReservationService reservationService;
     private final ScreeningService screeningService;
+
     private final SeatSelectionCache seatSelectionCache;
     private final ReservationFactory reservationFactory;
     private final ScreeningSeatLock screeningSeatLock;
@@ -92,11 +94,19 @@ public class BookingService {
     public SeatStatusResponseDto getSeatStatus(Integer screeningId) {
         assertScreeningExists(screeningId);
 
-        Set<Integer> reservedSeatIds = reservationService.getReservedSeatIdByScreeningId(screeningId);
+        Set<Integer> unavailableSeats = getUnavailableSeats(screeningId);
         List<Seat> allSeats = seatService.findAllSeats();
 
-        List<SeatWithStatusDto> allSeatsWithStatus = buildSeatsWithStatus(allSeats, reservedSeatIds);
+        List<SeatWithStatusDto> allSeatsWithStatus = buildSeatsWithStatus(allSeats, unavailableSeats);
         return new SeatStatusResponseDto(screeningId, allSeatsWithStatus);
+    }
+
+    private Set<Integer> getUnavailableSeats(Integer screeningId) {
+        Set<Integer> reservedSeatIds = reservationService.getReservedSeatIdByScreeningId(screeningId);
+        Set<Integer> allLockByScreeningId = seatSelectionCache.getAllLockByScreeningId(screeningId);
+
+        reservedSeatIds.addAll(allLockByScreeningId);
+        return reservedSeatIds;
     }
 
     private void assertScreeningExists(Integer screeningId) {
@@ -107,9 +117,9 @@ public class BookingService {
         List<SeatWithStatusDto> allSeatsWithStatus = allSeats.stream()
                 .map(seat -> new SeatWithStatusDto(
                         seat.getSeatId(),
-                        seat.getRow(),
-                        seat.getCol(),
-                        seat.getGrade(),
+                        seat.getRowId(),
+                        seat.getColId(),
+                        seat.getSeatGrade(),
                         seat.getPrice(),
                         reservedSeatIds.contains(seat.getSeatId())
                 ))
